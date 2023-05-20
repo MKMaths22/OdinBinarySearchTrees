@@ -21,6 +21,20 @@ class Tree
 
   include MergeSort
 
+  def initialize(values_array = [])
+    @values_array = prepare_array(values_array)
+    # values_array sorted with no duplicates
+    @root = build_tree
+  end
+
+  def build_tree
+
+  end
+
+  def prepare_array(any_array)
+    any_array.uniq!
+    array = merge_sort(any_array)
+  end
+
 end
 
-puts merge_sort([1,3,5,0])
