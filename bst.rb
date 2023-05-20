@@ -4,6 +4,8 @@ require_relative 'merge_sort'
 
 class Node
 
+  attr_reader :left_child, :right_child, :value
+  
   include Comparable
 
   def initialize(value, left_child = nil, right_child = nil)
@@ -12,9 +14,12 @@ class Node
     @right_child = right_child
   end
 
-
+  def pretty_print(node = @root, prefix = '', is_left = true)
+    pretty_print(node.right_child, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right_child
+    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
+    pretty_print(node.left_child, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left_child
+  end
 end
-
 
 # Tree class is for the binary search trees
 class Tree
@@ -46,7 +51,19 @@ class Tree
     array = merge_sort(any_array)
   end
 
+  def find(value, node = @root)
+    return nil unless node
+    
+    return node if node.value == value
+    return find(value, node.right_child) if node.value < value
+    return find(value, node.left_child)
+  end 
+
+
+
 end
 
 my_tree = Tree.new([1,3,2])
-p my_tree.root
+# p my_tree.root
+my_tree.root.pretty_print(my_tree.root)
+p my_tree.find(2)
