@@ -4,7 +4,7 @@ require_relative 'merge_sort'
 
 class Node
 
-  attr_reader :left_child, :right_child, :value
+  attr_accessor :left_child, :right_child, :value
   
   include Comparable
 
@@ -59,11 +59,21 @@ class Tree
     return find(value, node.left_child)
   end 
 
+  def insert(value, node = @root)
+    added_node = Node.new(value)
+    return unless node
+    node.right_child ? insert(value, node.right_child) : node.right_child = added_node if value > node.value
+    node.left_child ? insert(value, node.left_child) : node.left_child = added_node if value < node.value    
+  end
+
 
 
 end
 
-my_tree = Tree.new([1,3,2])
+my_tree = Tree.new([3,4,5,6])
 # p my_tree.root
 my_tree.root.pretty_print(my_tree.root)
-p my_tree.find(2)
+my_tree.insert(4.5)
+my_tree.root.pretty_print(my_tree.root)
+my_tree.insert(3.5)
+my_tree.root.pretty_print(my_tree.root)
