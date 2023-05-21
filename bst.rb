@@ -19,6 +19,18 @@ class Node
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
     pretty_print(node.left_child, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left_child
   end
+
+  def next_inorder(node)
+    return 'Error, must supply node with right child' unless node.right_child
+    parent = node
+    next_node = node.right_child
+    while next_node.left_child do
+      parent = next_node
+      next_node = next_node.left_child 
+    # we go as far left as possible from the right child
+    end
+    [next_node, parent]
+  end
 end
 
 # Tree class is for the binary search trees
@@ -64,7 +76,9 @@ class Tree
 
   def insert(value, node = @root)
     added_node = Node.new(value)
-    return unless node
+    @root = added_node unless node
+    return unless node 
+    
     node.right_child ? insert(value, node.right_child) : node.right_child = added_node if value > node.value
     node.left_child ? insert(value, node.left_child) : node.left_child = added_node if value < node.value    
   end
@@ -72,23 +86,64 @@ class Tree
   def delete(value)
     found_nodes = find(value, true)
     # find method supplies node and its parent as an array
-    node_to_delete = found_nodes[0]
-    return unless node_to_delete
+    node = found_nodes[0]
+    return unless node
     # guard clause in case value not found
     
     parent = found_nodes[1]
+
+    delete_node(node, parent)
+  end
+    
+  def delete_node(node, parent)
+  
     if !node.left_child && !node.right_child
     # node is a leaf, just remove connection from parent
-      if @root == node_to_delete
+      if @root == node
         @root = nil
-        return node_to_delete
+        return node
       end
-      parent.left_child = nil if parent.left_child == node_to_delete
-      parent.right_child = nil if parent.right_child == node_to_delete
-      return node_to_delete
+      # if node is not the root, it has a parent which must have link changed
+      parent.left_child = nil if parent.left_child == node
+      parent.right_child = nil if parent.right_child == node
+      return node
     end
 
+    if !node.left_child 
+    # already covered case of no children at all, so there will be a right_child
+    # parent gets connected to the child instead of the node we are deleting
+      if @root == node
+        @root = node.right_child
+        return node
+      end 
+      # if node is not the root, it has a parent which must have link changed
+      parent.left_child = node.right_child if parent.left_child == node
+      parent.right_child = node.right_child if parent.right_child == node
+      return node
+    end
 
+    if !node.right_child
+    # just like above, but with left and right reversed. Refactor later for DRY
+      if @root == node
+        @root = node.left_child
+        return node
+      end
+    # if node is not the root, it has a parent which must have link changed
+      parent.left_child = node.left_child if parent.left_child == node
+      parent.right_child = node.left_child if parent.right_child == node
+      return node
+    end
+
+    # now node has two children for sure, we copy contents from inorder successor
+    # and recursively delete the inorder successor
+
+    successor_and_parent = node.next_inorder(node)
+    # which returns array of the next inorder node and its parent, allowing us
+    # to call delete_node recursively
+    successor = successor_and_parent[0]
+    node.value = successor.value
+    new_parent = successor_and_parent[1]
+    delete_node(successor, new_parent)
   end
 
   def level_order
@@ -139,4 +194,14 @@ end
 my_tree = Tree.new([1,2,3,4,5,6,7,8])
 # p my_tree.root
 my_tree.root.pretty_print(my_tree.root)
-p my_tree.find(8,true)
+p my_tree.delete(2)
+p my_tree.delete(1)
+p my_tree.delete(7)
+p my_tree.delete(3)
+p my_tree.delete(4)
+p my_tree.delete(5)
+p my_tree.delete(6)
+p my_tree.delete(8)
+my_tree.insert(10)
+my_tree.insert(11)
+my_tree.root.pretty_print(my_tree.root)
