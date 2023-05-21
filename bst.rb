@@ -31,6 +31,12 @@ class Node
     end
     [next_node, parent]
   end
+
+  def height(node)
+    return -1 unless node
+    # nil has height -1, so that leaf nodes have height 0
+    return 1 + [height(node.left_child), height(node.right_child)].max
+  end
 end
 
 # Tree class is for the binary search trees
@@ -194,14 +200,5 @@ end
 my_tree = Tree.new([1,2,3,4,5,6,7,8])
 # p my_tree.root
 my_tree.root.pretty_print(my_tree.root)
-p my_tree.delete(2)
-p my_tree.delete(1)
-p my_tree.delete(7)
-p my_tree.delete(3)
-p my_tree.delete(4)
-p my_tree.delete(5)
-p my_tree.delete(6)
-p my_tree.delete(8)
-my_tree.insert(10)
-my_tree.insert(11)
-my_tree.root.pretty_print(my_tree.root)
+node = my_tree.find(2)
+puts node.height(node)
