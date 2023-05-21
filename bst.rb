@@ -37,6 +37,12 @@ class Node
     # nil has height -1, so that leaf nodes have height 0
     return 1 + [height(node.left_child), height(node.right_child)].max
   end
+
+  def depth(target, node = @root, depth_so_far = 0)
+    return depth_so_far if target == node
+    return depth(target, node.left_child, depth_so_far + 1) if target.value < node.value
+    return depth(target, node.right_child, depth_so_far + 1)
+  end
 end
 
 # Tree class is for the binary search trees
@@ -90,7 +96,7 @@ class Tree
   end
 
   def delete(value)
-    found_nodes = find(value, true)
+    found_nodes = find(value, 'parent')
     # find method supplies node and its parent as an array
     node = found_nodes[0]
     return unless node
@@ -200,5 +206,5 @@ end
 my_tree = Tree.new([1,2,3,4,5,6,7,8])
 # p my_tree.root
 my_tree.root.pretty_print(my_tree.root)
-node = my_tree.find(2)
-puts node.height(node)
+certain_node = my_tree.find(5)
+p certain_node.depth(certain_node, my_tree.root)
