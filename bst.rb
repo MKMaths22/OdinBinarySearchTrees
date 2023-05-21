@@ -51,12 +51,15 @@ class Tree
     array = merge_sort(any_array)
   end
 
-  def find(value, node = @root)
+  def find(value, find_parent = false, node = @root, parent_node = nil)
+    # optional argument find_parent can be supplied as true and the method
+    # outputs the node and its parent in an array
     return nil unless node
     
+    return [node, parent_node] if node.value == value && find_parent
     return node if node.value == value
-    return find(value, node.right_child) if node.value < value
-    return find(value, node.left_child)
+    return find(value, find_parent, node.right_child, node) if node.value < value
+    return find(value, find_parent, node.left_child, node)
   end 
 
   def insert(value, node = @root)
@@ -66,14 +69,74 @@ class Tree
     node.left_child ? insert(value, node.left_child) : node.left_child = added_node if value < node.value    
   end
 
+  def delete(value)
+    found_nodes = find(value, true)
+    # find method supplies node and its parent as an array
+    node_to_delete = found_nodes[0]
+    return unless node_to_delete
+    # guard clause in case value not found
+    
+    parent = found_nodes[1]
+    if !node.left_child && !node.right_child
+    # node is a leaf, just remove connection from parent
+      if @root == node_to_delete
+        @root = nil
+        return node_to_delete
+      end
+      parent.left_child = nil if parent.left_child == node_to_delete
+      parent.right_child = nil if parent.right_child == node_to_delete
+      return node_to_delete
+    end
+
+
+  end
+
+  def level_order
+    array_queue = [@root] if @root
+    output_array = []
+    # stores nodes to visit in BFS order. We push nodes on at the back and shift off at the front
+    while array_queue[0] do
+      node = array_queue.shift
+      block_given? ? yield(node) : output_array.push(node.value)
+      array_queue.push(node.left_child) if node.left_child
+      array_queue.push(node.right_child) if node.right_child
+    end
+    return output_array unless block_given? 
+  end
+
+  def inorder(node = @root, array = [],&block)
+    return unless node
+    
+    inorder(node.left_child, array, &block)
+    block_given? ? yield(node) : array.push(node.value)
+    inorder(node.right_child, array, &block)
+    return array if node == @root && !block_given?
+  end
+
+  def preorder(node = @root, array = [],&block)
+    return unless node
+
+    block_given? ? yield(node) : array.push(node.value)
+    preorder(node.left_child, array, &block)
+    preorder(node.right_child, array, &block)
+    return array if node == @root && !block_given?
+  end
+
+  def postorder(node = @root, array = [],&block)
+    return unless node
+
+    postorder(node.left_child, array, &block)
+    postorder(node.right_child, array, &block)
+    block_given? ? yield(node) : array.push(node.value)
+    return array if node == @root && !block_given?
+  end
+
+
 
 
 end
 
-my_tree = Tree.new([3,4,5,6])
+my_tree = Tree.new([1,2,3,4,5,6,7,8])
 # p my_tree.root
 my_tree.root.pretty_print(my_tree.root)
-my_tree.insert(4.5)
-my_tree.root.pretty_print(my_tree.root)
-my_tree.insert(3.5)
-my_tree.root.pretty_print(my_tree.root)
+p my_tree.find(8,true)
