@@ -120,7 +120,6 @@ class Tree
     node, parent = node_parent_array
     
     unless node.left_child && node.right_child
-      
       child = node.left_child || node.right_child
       # child is the one child of node, or nil if it is a leaf
       if @root == node
@@ -145,7 +144,7 @@ class Tree
   end
 
   def level_order
-    array_queue = [@root] if @root
+    array_queue = [@root]
     output_array = []
     # stores nodes to visit in BFS order. We push nodes on at the back and shift off at the front
     while array_queue[0] do
@@ -155,6 +154,18 @@ class Tree
       array_queue.push(node.right_child) if node.right_child
     end
     return output_array unless block_given? 
+  end
+
+  def level_order_rec(node_array = [@root], values_array = [], &block)
+    unless node_array[0]
+        return values_array unless block_given?
+        return
+    end
+    node = node_array.shift
+    block_given? ? yield(node) : values_array.push(node.value)
+    node_array.push(node.left_child) if node.left_child
+    node_array.push(node.right_child) if node.right_child
+    return level_order_rec(node_array, values_array, &block)
   end
 
   def inorder(node = @root, array = [],&block)
@@ -196,7 +207,9 @@ class Tree
     # temp array looks like (height_left, true/false, height_right, true/false)
     height = [temp[0], temp[2]].max + 1
     boolean = temp[1] && temp[3] && (temp[0] - temp[2]).between?(-1,1)
-    return boolean if node == @root 
+    # tree balanced if both subtrees balanced and their heights differ by -1, 0 or 1
+    return boolean if node == @root
+    # outermost function returns only the boolean value, otherwise height returned as well
     return [height, boolean]
   end
 
@@ -206,5 +219,10 @@ class Tree
   end
 
 end
+
+tree = Tree.new([1,2,3,4,5,6,7,8,9,10])
+tree.root.pretty_print(tree.root)
+p tree.level_order
+p tree.level_order_rec
 
 # UNCOMMENT THIS IN FINAL VERSION driver_script
