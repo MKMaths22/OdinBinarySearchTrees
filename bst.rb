@@ -25,12 +25,15 @@ class Node
   end
 
   def next_inorder(node)
+    # this method returns the next node in order from a given node, with its parent
+    # for use in the recursive delete method. We only need this method for nodes
+    # that have two children
     return 'Error, must supply node with right child' unless node.right_child
     parent = node
     next_node = node.right_child
     while next_node.left_child do
       parent = next_node
-      next_node = next_node.left_child 
+      next_node = next_node.left_child
     # we go as far left as possible from the right child
     end
     [next_node, parent]
@@ -91,75 +94,54 @@ class Tree
   end 
 
   def insert(value, node = @root)
+    # optional node argument keeps track of recursive progress towards where we insert
     added_node = Node.new(value)
-    @root = added_node unless node
-    return unless node 
+    unless node
+      @root = added_node
+      return
+    end
+    # if tree were empty, the added_node will be the root
     
     node.right_child ? insert(value, node.right_child) : node.right_child = added_node if value > node.value
-    node.left_child ? insert(value, node.left_child) : node.left_child = added_node if value < node.value    
+    node.left_child ? insert(value, node.left_child) : node.left_child = added_node if value < node.value
+    # we recursively look lower down tree for insertion point unless there is no child in the direction we are looking
   end
 
   def delete(value)
-    found_nodes = find(value, 'parent')
+    found_nodes = find(value, true)
     # find method supplies node and its parent as an array
     node = found_nodes[0]
     return unless node
     # guard clause in case value not found
-    
-    parent = found_nodes[1]
-
-    delete_node(node, parent)
+    delete_node(found_nodes)
   end
     
-  def delete_node(node, parent)
-  
-    if !node.left_child && !node.right_child
-    # node is a leaf, just remove connection from parent
+  def delete_node(node_parent_array)
+    node, parent = node_parent_array
+    
+    unless node.left_child && node.right_child
+      
+      child = node.left_child || node.right_child
+      # child is the one child of node, or nil if it is a leaf
       if @root == node
-        @root = nil
+        @root = child
         return node
       end
-      # if node is not the root, it has a parent which must have link changed
-      parent.left_child = nil if parent.left_child == node
-      parent.right_child = nil if parent.right_child == node
-      return node
-    end
 
-    if !node.left_child 
-    # already covered case of no children at all, so there will be a right_child
-    # parent gets connected to the child instead of the node we are deleting
-      if @root == node
-        @root = node.right_child
-        return node
-      end 
-      # if node is not the root, it has a parent which must have link changed
-      parent.left_child = node.right_child if parent.left_child == node
-      parent.right_child = node.right_child if parent.right_child == node
-      return node
-    end
+      # if node is not the root, parent must have link changed
 
-    if !node.right_child
-    # just like above, but with left and right reversed. Refactor later for DRY
-      if @root == node
-        @root = node.left_child
-        return node
-      end
-    # if node is not the root, it has a parent which must have link changed
-      parent.left_child = node.left_child if parent.left_child == node
-      parent.right_child = node.left_child if parent.right_child == node
+      parent.left_child == node ? parent.left_child = child : parent.right_child = child
       return node
     end
 
     # now node has two children for sure, we copy contents from inorder successor
     # and recursively delete the inorder successor
-
     successor_and_parent = node.next_inorder(node)
     # which returns array of the next inorder node and its parent, allowing us
     # to call delete_node recursively
     successor = successor_and_parent[0]
     node.value = successor.value
-    new_parent = successor_and_parent[1]
-    delete_node(successor, new_parent)
+    delete_node(successor_and_parent)
   end
 
   def level_order
@@ -225,4 +207,4 @@ class Tree
 
 end
 
-driver_script
+# UNCOMMENT THIS IN FINAL VERSION driver_script
