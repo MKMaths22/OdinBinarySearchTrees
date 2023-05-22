@@ -6,7 +6,7 @@ require_relative 'merge_sort'
 include DriverScript
 
 # Node class describes methods for nodes of a binary search tree
-class Node
+class Node    
 
   attr_accessor :left, :right, :value
   
@@ -30,13 +30,14 @@ class Node
     # for use in the recursive delete method. We only need this method for nodes
     # that have two children
     return 'Error, must supply node with right child' unless node.right
+    
     parent = node
     next_node = node.right
-    while next_node.left do
-      parent = next_node
-      next_node = next_node.left
-    # we go as far left as possible from the right child
-    end
+      while next_node.left do
+        parent = next_node
+        next_node = next_node.left
+        # we go as far left as possible from the right child
+      end
     [next_node, parent]
   end
 
@@ -59,7 +60,7 @@ class Tree
   include MergeSort
 
   attr_reader :root
-  
+
   def initialize(values_array = [])
     array_to_use = prepare_array(values_array)
     # values_array sorted with no duplicates
@@ -68,6 +69,7 @@ class Tree
 
   def build_tree(array)
     return nil if array.size.zero?
+
     mid_index = array.size / 2
     mid_value = array[mid_index]
     left_values = array.slice!(0, mid_index)
@@ -89,23 +91,26 @@ class Tree
     return nil unless node
     
     return [node, parent_node] if node.value == value && find_parent
+    
     return node if node.value == value
+
     return find(value, find_parent, node.right, node) if node.value < value
+    
     return find(value, find_parent, node.left, node)
-  end 
+  end
 
   def insert(value, node = @root)
     # optional node argument keeps track of recursive progress towards where we insert
     added_node = Node.new(value)
-    unless node
-      @root = added_node
-      return
-    end
+      unless node
+        @root = added_node
+        return
+      end
     # if tree were empty, the added_node will be the root
-    if value == node.value
+      if value == node.value
         puts 'Duplication error, requested value already in tree.'
         return
-    end
+      end
 
     node.right ? insert(value, node.right) : node.right = added_node if value > node.value
     node.left ? insert(value, node.left) : node.left = added_node if value < node.value
@@ -117,26 +122,27 @@ class Tree
     # find method supplies node and its parent as an array
     node = found_nodes[0]
     return unless node
+    
     # guard clause in case value not found
     delete_node(found_nodes)
   end
-    
+  
   def delete_node(node_parent_array)
     node, parent = node_parent_array
-    
-    unless node.left && node.right
-      child = node.left || node.right
-      # child is the one child of node, or nil if it is a leaf
-      if @root == node
-        @root = child
+
+      unless node.left && node.right
+        child = node.left || node.right
+        # child is the one child of node, or nil if it is a leaf
+          if @root == node
+            @root = child
+            return node
+          end
+
+        # if node is not the root, parent must have link changed
+
+        parent.left == node ? parent.left = child : parent.right = child
         return node
       end
-
-      # if node is not the root, parent must have link changed
-
-      parent.left == node ? parent.left = child : parent.right = child
-      return node
-    end
 
     # now node has two children for sure, we copy contents from inorder successor
     # and recursively delete the inorder successor
@@ -152,24 +158,26 @@ class Tree
     array_queue = [@root]
     output_array = []
     # stores nodes to visit in BFS order. We push nodes on at the back and shift off at the front
-    while array_queue[0] do
-      node = array_queue.shift
-      block_given? ? yield(node) : output_array.push(node.value)
-      array_queue.push(node.left) if node.left
-      array_queue.push(node.right) if node.right
-    end
+      while array_queue[0] do
+        node = array_queue.shift
+        block_given? ? yield(node) : output_array.push(node.value)
+        array_queue.push(node.left) if node.left
+        array_queue.push(node.right) if node.right
+      end
     return output_array unless block_given? 
   end
 
   def level_order_rec(node_array = [@root], values_array = [], &block)
-    unless node_array[0]
+      unless node_array[0]
         return values_array unless block_given?
         return
-    end
-    node = node_array.shift
+      end
+    
+      node = node_array.shift
     block_given? ? yield(node) : values_array.push(node.value)
     node_array.push(node.left) if node.left
     node_array.push(node.right) if node.right
+    
     return level_order_rec(node_array, values_array, &block)
   end
 
@@ -181,9 +189,10 @@ class Tree
     block_given? ? yield(node) : array.push(node.value) if order == 'in'
     many_orders(order, node.right, array, &block)
     block_given? ? yield(node) : array.push(node.value) if order == 'post'
+    
     return array unless block_given?
   end
-  
+
   def inorder(node = @root, array = [], &block)
     many_orders('in', node = @root, array = [], &block)
   end
@@ -210,6 +219,7 @@ class Tree
     boolean = temp[1] && temp[3] && (temp[0] - temp[2]).between?(-1,1)
     # tree balanced if both subtrees balanced and their heights differ by -1, 0 or 1
     return boolean if node == @root
+    
     # outermost function returns only the boolean value, otherwise height returned as well
     return [height, boolean]
   end
