@@ -102,7 +102,11 @@ class Tree
       return
     end
     # if tree were empty, the added_node will be the root
-    
+    if value == node.value
+        puts 'Duplication error, requested value already in tree.'
+        return
+    end
+
     node.right ? insert(value, node.right) : node.right = added_node if value > node.value
     node.left ? insert(value, node.left) : node.left = added_node if value < node.value
     # we recursively look lower down tree for insertion point unless there is no child in the direction we are looking
