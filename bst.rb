@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'driver_script'
 require_relative 'merge_sort'
 
+include DriverScript
+
+# Node class describes methods for nodes of a binary search tree
 class Node
 
   attr_accessor :left_child, :right_child, :value
@@ -45,7 +49,7 @@ class Node
   end
 end
 
-# Tree class is for the binary search trees
+# Tree class is for the binary search trees themselves
 class Tree
 
   include MergeSort
@@ -219,16 +223,6 @@ class Tree
     @root = build_tree(inorder)
   end
 
-
 end
 
-my_tree = Tree.new([1,2,3,4,5,6,7,8])
-my_tree.root.pretty_print(my_tree.root)
-my_tree.insert(2.5)
-my_tree.insert(0)
-my_tree.insert(-1)
-my_tree.root.pretty_print(my_tree.root)
-p my_tree.balanced?
-my_tree.rebalance
-my_tree.root.pretty_print(my_tree.root)
-
+driver_script
