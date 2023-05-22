@@ -23,6 +23,7 @@ class Node
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
+  # See README for comments on pretty_print, which I did NOT write myself.
 
   def next_inorder(node)
     # this method returns the next node in order from a given node, with its parent

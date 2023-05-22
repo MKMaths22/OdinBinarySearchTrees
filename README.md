@@ -3,7 +3,9 @@ Follows TOP Binary Search Trees assignment.
 
 This project uses the MIT License.
 
-Project instructions:  
+Project instructions:
+-----------------------------------
+
 (1) Build a Node class. It should have an attribute for the data it stores as well as its left and right children. As a bonus, try including the Comparable module and compare nodes using their data attribute.
 
 (2) Build a Tree class which accepts an array when initialized. The Tree class should have a root attribute which uses the return value of #build_tree which you’ll write next.
@@ -28,7 +30,7 @@ You may be tempted to implement these methods using the original input array, bu
 
 (11) Write a #rebalance method which rebalances an unbalanced tree. Tip: You’ll want to use a traversal method to provide a new array to the #build_tree method.
 
-Tie it all together
+Tie it all together.  
 Write a simple driver script that does the following:
 
 Create a binary search tree from an array of random numbers (Array.new(15) { rand(1..100) })  
@@ -39,3 +41,9 @@ Confirm that the tree is unbalanced by calling #balanced?
 Balance the tree by calling #rebalance  
 Confirm that the tree is balanced by calling #balanced?  
 Print out all elements in level, pre, post, and in order  
+-------------------------------
+
+Comments from the author, Peter Hawes:
+-------------------------------
+
+As suggested by The Odin Project, I used the pretty_print method that a previous student had shared on Discord. What a pity I can't credit them personally. It was extremely useful to visualise the trees as I tested the many methods. Thanks, whoever you are!!
