@@ -198,13 +198,30 @@ class Tree
     return array if node == @root && !block_given?
   end
 
-
-
+  def balanced?(node = @root)
+    # calculates height of nodes and whether their subtree is balanced recursively
+    return true unless @root
+    # empty tree is balanced
+    
+    return [-1, true] unless node
+    # nil has height -1 and its subtree is balanced, base case of recursion
+    
+    temp = balanced?(node.left_child).concat(balanced?(node.right_child))
+    # temp array looks like (height_left, true/false, height_right, true/false)
+    height = [temp[0], temp[2]].max + 1
+    boolean = temp[1] && temp[3] && (temp[0] - temp[2]).between?(-1,1)
+    return boolean if node == @root 
+    return [height, boolean]
+  end
 
 end
 
-my_tree = Tree.new([1,2,3,4,5,6,7,8])
+my_tree = Tree.new
 # p my_tree.root
+# my_tree.root.pretty_print(my_tree.root)
+p my_tree.balanced?
+my_tree.insert(2.5)
+my_tree.insert(3.5)
+my_tree.insert(4.5)
 my_tree.root.pretty_print(my_tree.root)
-certain_node = my_tree.find(5)
-p certain_node.depth(certain_node, my_tree.root)
+p my_tree.balanced?
