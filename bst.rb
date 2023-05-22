@@ -8,32 +8,32 @@ include DriverScript
 # Node class describes methods for nodes of a binary search tree
 class Node
 
-  attr_accessor :left_child, :right_child, :value
+  attr_accessor :left, :right, :value
   
   include Comparable
 
-  def initialize(value, left_child = nil, right_child = nil)
+  def initialize(value, left = nil, right = nil)
     @value = value
-    @left_child = left_child
-    @right_child = right_child
+    @left = left
+    @right = right
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
-    pretty_print(node.right_child, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right_child
+    pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
-    pretty_print(node.left_child, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left_child
+    pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 
   def next_inorder(node)
     # this method returns the next node in order from a given node, with its parent
     # for use in the recursive delete method. We only need this method for nodes
     # that have two children
-    return 'Error, must supply node with right child' unless node.right_child
+    return 'Error, must supply node with right child' unless node.right
     parent = node
-    next_node = node.right_child
-    while next_node.left_child do
+    next_node = node.right
+    while next_node.left do
       parent = next_node
-      next_node = next_node.left_child
+      next_node = next_node.left
     # we go as far left as possible from the right child
     end
     [next_node, parent]
@@ -42,13 +42,13 @@ class Node
   def height(node)
     return -1 unless node
     # nil has height -1, so that leaf nodes have height 0
-    return 1 + [height(node.left_child), height(node.right_child)].max
+    return 1 + [height(node.left), height(node.right)].max
   end
 
   def depth(target, node = @root, depth_so_far = 0)
     return depth_so_far if target == node
-    return depth(target, node.left_child, depth_so_far + 1) if target.value < node.value
-    return depth(target, node.right_child, depth_so_far + 1)
+    return depth(target, node.left, depth_so_far + 1) if target.value < node.value
+    return depth(target, node.right, depth_so_far + 1)
   end
 end
 
@@ -89,8 +89,8 @@ class Tree
     
     return [node, parent_node] if node.value == value && find_parent
     return node if node.value == value
-    return find(value, find_parent, node.right_child, node) if node.value < value
-    return find(value, find_parent, node.left_child, node)
+    return find(value, find_parent, node.right, node) if node.value < value
+    return find(value, find_parent, node.left, node)
   end 
 
   def insert(value, node = @root)
@@ -102,8 +102,8 @@ class Tree
     end
     # if tree were empty, the added_node will be the root
     
-    node.right_child ? insert(value, node.right_child) : node.right_child = added_node if value > node.value
-    node.left_child ? insert(value, node.left_child) : node.left_child = added_node if value < node.value
+    node.right ? insert(value, node.right) : node.right = added_node if value > node.value
+    node.left ? insert(value, node.left) : node.left = added_node if value < node.value
     # we recursively look lower down tree for insertion point unless there is no child in the direction we are looking
   end
 
@@ -119,8 +119,8 @@ class Tree
   def delete_node(node_parent_array)
     node, parent = node_parent_array
     
-    unless node.left_child && node.right_child
-      child = node.left_child || node.right_child
+    unless node.left && node.right
+      child = node.left || node.right
       # child is the one child of node, or nil if it is a leaf
       if @root == node
         @root = child
@@ -129,7 +129,7 @@ class Tree
 
       # if node is not the root, parent must have link changed
 
-      parent.left_child == node ? parent.left_child = child : parent.right_child = child
+      parent.left == node ? parent.left = child : parent.right = child
       return node
     end
 
@@ -150,8 +150,8 @@ class Tree
     while array_queue[0] do
       node = array_queue.shift
       block_given? ? yield(node) : output_array.push(node.value)
-      array_queue.push(node.left_child) if node.left_child
-      array_queue.push(node.right_child) if node.right_child
+      array_queue.push(node.left) if node.left
+      array_queue.push(node.right) if node.right
     end
     return output_array unless block_given? 
   end
@@ -163,8 +163,8 @@ class Tree
     end
     node = node_array.shift
     block_given? ? yield(node) : values_array.push(node.value)
-    node_array.push(node.left_child) if node.left_child
-    node_array.push(node.right_child) if node.right_child
+    node_array.push(node.left) if node.left
+    node_array.push(node.right) if node.right
     return level_order_rec(node_array, values_array, &block)
   end
 
@@ -172,9 +172,9 @@ class Tree
     return unless node
 
     block_given? ? yield(node) : array.push(node.value) if order == 'pre'
-    many_orders(order, node.left_child, array, &block)
+    many_orders(order, node.left, array, &block)
     block_given? ? yield(node) : array.push(node.value) if order == 'in'
-    many_orders(order, node.right_child, array, &block)
+    many_orders(order, node.right, array, &block)
     block_given? ? yield(node) : array.push(node.value) if order == 'post'
     return array unless block_given?
   end
@@ -199,7 +199,7 @@ class Tree
     return [-1, true] unless node
     # nil has height -1 and its subtree is balanced, base case of recursion
     
-    temp = balanced?(node.left_child).concat(balanced?(node.right_child))
+    temp = balanced?(node.left).concat(balanced?(node.right))
     # temp array looks like (height_left, true/false, height_right, true/false)
     height = [temp[0], temp[2]].max + 1
     boolean = temp[1] && temp[3] && (temp[0] - temp[2]).between?(-1,1)
