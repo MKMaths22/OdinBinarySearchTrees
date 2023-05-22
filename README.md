@@ -41,8 +41,8 @@ Confirm that the tree is unbalanced by calling #balanced?
 Balance the tree by calling #rebalance  
 Confirm that the tree is balanced by calling #balanced?  
 Print out all elements in level, pre, post, and in order  
--------------------------------
 
+-------------------------------
 Comments from the author, Peter Hawes:
 -------------------------------
 
