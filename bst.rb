@@ -168,31 +168,27 @@ class Tree
     return level_order_rec(node_array, values_array, &block)
   end
 
-  def inorder(node = @root, array = [],&block)
+  def many_orders(order, node = @root, array = [], &block)
     return unless node
-    
-    inorder(node.left_child, array, &block)
-    block_given? ? yield(node) : array.push(node.value)
-    inorder(node.right_child, array, &block)
-    return array if node == @root && !block_given?
+
+    block_given? ? yield(node) : array.push(node.value) if order == 'pre'
+    many_orders(order, node.left_child, array, &block)
+    block_given? ? yield(node) : array.push(node.value) if order == 'in'
+    many_orders(order, node.right_child, array, &block)
+    block_given? ? yield(node) : array.push(node.value) if order == 'post'
+    return array unless block_given?
+  end
+  
+  def inorder(node = @root, array = [], &block)
+    many_orders('in', node = @root, array = [], &block)
   end
 
   def preorder(node = @root, array = [],&block)
-    return unless node
-
-    block_given? ? yield(node) : array.push(node.value)
-    preorder(node.left_child, array, &block)
-    preorder(node.right_child, array, &block)
-    return array if node == @root && !block_given?
+    many_orders('pre', node = @root, array = [], &block)
   end
 
   def postorder(node = @root, array = [],&block)
-    return unless node
-
-    postorder(node.left_child, array, &block)
-    postorder(node.right_child, array, &block)
-    block_given? ? yield(node) : array.push(node.value)
-    return array if node == @root && !block_given?
+    many_orders('post', node = @root, array = [], &block)
   end
 
   def balanced?(node = @root)
@@ -220,9 +216,4 @@ class Tree
 
 end
 
-tree = Tree.new([1,2,3,4,5,6,7,8,9,10])
-tree.root.pretty_print(tree.root)
-p tree.level_order
-p tree.level_order_rec
-
-# UNCOMMENT THIS IN FINAL VERSION driver_script
+driver_script
