@@ -48,5 +48,7 @@ Comments from the author, Peter Hawes:
 
 As suggested by The Odin Project, I used the pretty_print method that a previous student had shared on Discord. What a pity I can't credit them personally. It was extremely useful to visualise the trees as I tested the many methods. Thanks, whoever you are!!
 
+It was also helpful to use my merge_sort method by importing the module MergeSort from merge_sort.rb for use in #build_tree.  
+
 I have implemented both recursive and iterative versions of #level_order: #level_order and #level_order_rec.  
 I was using left_child and right_child for the children of nodes but changed it at the end to left and right to make the code more readable.
