@@ -10,14 +10,6 @@ Project instructions:
 
 (3) Write a #build_tree method which takes an array of data (e.g. [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]) and turns it into a balanced binary tree full of Node objects appropriately placed (don’t forget to sort and remove duplicates!). The #build_tree method should return the level-0 root node.
 
-Tip: If you would like to visualize your binary search tree, here is a #pretty_print method that a student wrote and shared on Discord:
-
-def pretty_print(node = @root, prefix = '', is_left = true)
-  pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
-  puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
-  pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
-end
-
 (4) Write an #insert and #delete method which accepts a value to insert/delete (you’ll have to deal with several cases for delete such as when a node has children or not). If you need additional resources, check out these two articles on inserting and deleting, or this video with several visual examples.
 
 You may be tempted to implement these methods using the original input array, but it’s important for the efficiency of these operations that you don’t do this. If we refer back to the Big O Cheatsheet, we’ll see that binary search trees can insert/delete in O(log n) time, which is a significant performance boost over arrays for the same operations. In order to get this added efficiency, your implementation of these methods should traverse the tree and manipulate the nodes and their connections.
@@ -39,11 +31,11 @@ You may be tempted to implement these methods using the original input array, bu
 Tie it all together
 Write a simple driver script that does the following:
 
-Create a binary search tree from an array of random numbers (Array.new(15) { rand(1..100) })
-Confirm that the tree is balanced by calling #balanced?
-Print out all elements in level, pre, post, and in order
-Unbalance the tree by adding several numbers > 100
-Confirm that the tree is unbalanced by calling #balanced?
-Balance the tree by calling #rebalance
-Confirm that the tree is balanced by calling #balanced?
-Print out all elements in level, pre, post, and in order
+Create a binary search tree from an array of random numbers (Array.new(15) { rand(1..100) })  
+Confirm that the tree is balanced by calling #balanced?  
+Print out all elements in level, pre, post, and in order  
+Unbalance the tree by adding several numbers > 100  
+Confirm that the tree is unbalanced by calling #balanced?  
+Balance the tree by calling #rebalance  
+Confirm that the tree is balanced by calling #balanced?  
+Print out all elements in level, pre, post, and in order  
