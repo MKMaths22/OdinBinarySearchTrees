@@ -214,14 +214,21 @@ class Tree
     return [height, boolean]
   end
 
+  def rebalance
+    # method assumes we know tree is not balanced to prevent duplicating code
+    @root = build_tree(inorder)
+  end
+
+
 end
 
-my_tree = Tree.new
-# p my_tree.root
-# my_tree.root.pretty_print(my_tree.root)
-p my_tree.balanced?
+my_tree = Tree.new([1,2,3,4,5,6,7,8])
+my_tree.root.pretty_print(my_tree.root)
 my_tree.insert(2.5)
-my_tree.insert(3.5)
-my_tree.insert(4.5)
+my_tree.insert(0)
+my_tree.insert(-1)
 my_tree.root.pretty_print(my_tree.root)
 p my_tree.balanced?
+my_tree.rebalance
+my_tree.root.pretty_print(my_tree.root)
+
