@@ -187,7 +187,7 @@ class Tree
     level_order_rec(node_array, values_array, &block)
   end
 
-  def many_orders(_order, node = @root, array = [])
+  def many_orders(order, node = @root, array = [], &block)
     return unless node
 
     block_given? ? yield(node) : array.push(node.value) if order == 'pre'
